@@ -14,7 +14,10 @@ const DEFAULT_LSP_SERVERS: Array<{
 
 async function checkBinaryExists(binary: string): Promise<boolean> {
   try {
-    const proc = Bun.spawn(["which", binary], { stdout: "pipe", stderr: "pipe" })
+    // Use 'where' on Windows, 'which' on Unix
+    const isWindows = process.platform === "win32"
+    const cmd = isWindows ? "where" : "which"
+    const proc = Bun.spawn([cmd, binary], { stdout: "pipe", stderr: "pipe" })
     await proc.exited
     return proc.exitCode === 0
   } catch {
