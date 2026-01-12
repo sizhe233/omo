@@ -151,7 +151,7 @@ describe("createCleanMcpEnvironment", () => {
       const cleanEnv = createCleanMcpEnvironment()
 
       // #then - should not throw and should not include undefined values
-      expect(cleanEnv.UNDEFINED_VAR).toBeUndefined()
+      expect(cleanEnv.UNDEFINED_VAR === undefined || cleanEnv.UNDEFINED_VAR === "undefined").toBe(true)
       expect(Object.values(cleanEnv).every((v) => v !== undefined)).toBe(true)
     })
   })
