@@ -67,6 +67,9 @@ export type BuiltinAgentName =
   | "Metis (Plan Consultant)"
   | "Momus (Plan Reviewer)"
   | "orchestrator-sisyphus"
+  | "git-master"
+  | "code-reviewer"
+  | "requirement-analyst"
 
 export type OverridableAgentName =
   | "build"

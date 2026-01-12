@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "google/gemini-3-flash"
 export const MULTIMODAL_LOOKER_PROMPT_METADATA: AgentPromptMetadata = {
   category: "utility",
   cost: "CHEAP",
-  promptAlias: "Multimodal Looker",
+  promptAlias: "多模态观察",
   triggers: [],
 }
 

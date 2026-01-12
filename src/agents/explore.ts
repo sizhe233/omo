@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "opencode/grok-code"
 export const EXPLORE_PROMPT_METADATA: AgentPromptMetadata = {
   category: "exploration",
   cost: "FREE",
-  promptAlias: "Explore",
+  promptAlias: "探索者",
   keyTrigger: "2+ modules involved → fire `explore` background",
   triggers: [
     { domain: "Explore", trigger: "Find existing codebase structure, patterns and styles" },

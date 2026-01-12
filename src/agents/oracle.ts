@@ -8,7 +8,7 @@ const DEFAULT_MODEL = "openai/gpt-5.2"
 export const ORACLE_PROMPT_METADATA: AgentPromptMetadata = {
   category: "advisor",
   cost: "EXPENSIVE",
-  promptAlias: "Oracle",
+  promptAlias: "架构顾问",
   triggers: [
     { domain: "Architecture decisions", trigger: "Multi-system tradeoffs, unfamiliar patterns" },
     { domain: "Self-review", trigger: "After completing significant implementation" },

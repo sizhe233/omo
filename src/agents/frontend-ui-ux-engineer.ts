@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "google/gemini-3-pro-preview"
 export const FRONTEND_PROMPT_METADATA: AgentPromptMetadata = {
   category: "specialist",
   cost: "CHEAP",
-  promptAlias: "Frontend UI/UX Engineer",
+  promptAlias: "前端工程师",
   triggers: [
     { domain: "Frontend UI/UX", trigger: "Visual changes only (styling, layout, animation). Pure logic changes in frontend files → handle directly" },
   ],

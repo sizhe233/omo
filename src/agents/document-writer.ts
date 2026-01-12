@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "google/gemini-3-flash-preview"
 export const DOCUMENT_WRITER_PROMPT_METADATA: AgentPromptMetadata = {
   category: "specialist",
   cost: "CHEAP",
-  promptAlias: "Document Writer",
+  promptAlias: "文档撰写",
   triggers: [
     { domain: "Documentation", trigger: "README, API docs, guides" },
   ],
