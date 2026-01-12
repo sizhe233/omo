@@ -170,31 +170,63 @@ export function isServerInstalled(command: string[]): boolean {
   }
 
   const isWindows = process.platform === "win32"
-  const ext = isWindows ? ".exe" : ""
+  // Windows npm packages can be .exe, .cmd, or .bat
+  const windowsExts = [".exe", ".cmd", ".bat"]
 
   const pathEnv = process.env.PATH || ""
   const pathSeparator = isWindows ? ";" : ":"
   const paths = pathEnv.split(pathSeparator)
 
   for (const p of paths) {
-    if (existsSync(join(p, cmd)) || existsSync(join(p, cmd + ext))) {
-      return true
+    if (existsSync(join(p, cmd))) return true
+    if (isWindows) {
+      for (const ext of windowsExts) {
+        if (existsSync(join(p, cmd + ext))) return true
+      }
     }
   }
 
   const cwd = process.cwd()
-  const additionalPaths = [
-    join(cwd, "node_modules", ".bin", cmd),
-    join(cwd, "node_modules", ".bin", cmd + ext),
-    join(homedir(), ".config", "opencode", "bin", cmd),
-    join(homedir(), ".config", "opencode", "bin", cmd + ext),
-    join(homedir(), ".config", "opencode", "node_modules", ".bin", cmd),
-    join(homedir(), ".config", "opencode", "node_modules", ".bin", cmd + ext),
+  const home = homedir()
+  const additionalBasePaths = [
+    join(cwd, "node_modules", ".bin"),
+    join(home, ".config", "opencode", "bin"),
+    join(home, ".config", "opencode", "node_modules", ".bin"),
+    // npm global paths (Windows: %APPDATA%\npm, Unix: /usr/local/bin or ~/.npm-global/bin)
+    ...(isWindows
+      ? [
+          join(process.env.APPDATA || join(home, "AppData", "Roaming"), "npm"),
+          join(process.env.LOCALAPPDATA || join(home, "AppData", "Local"), "npm"),
+        ]
+      : [
+          "/usr/local/bin",
+          join(home, ".npm-global", "bin"),
+          join(home, ".local", "bin"),
+        ]),
+    // bun global path
+    join(home, ".bun", "bin"),
+    // pnpm global path
+    ...(isWindows
+      ? [join(process.env.LOCALAPPDATA || join(home, "AppData", "Local"), "pnpm")]
+      : [join(home, ".local", "share", "pnpm")]),
+    // yarn global path
+    ...(isWindows
+      ? [join(process.env.LOCALAPPDATA || join(home, "AppData", "Local"), "Yarn", "bin")]
+      : [join(home, ".yarn", "bin")]),
+    // volta paths
+    join(home, ".volta", "bin"),
+    // nvm paths (Windows)
+    ...(isWindows
+      ? [join(process.env.NVM_SYMLINK || join(home, "AppData", "Roaming", "nvm", "current"))]
+      : []),
   ]
 
-  for (const p of additionalPaths) {
-    if (existsSync(p)) {
-      return true
+  for (const basePath of additionalBasePaths) {
+    if (existsSync(join(basePath, cmd))) return true
+    if (isWindows) {
+      for (const ext of windowsExts) {
+        if (existsSync(join(basePath, cmd + ext))) return true
+      }
     }
   }
 
