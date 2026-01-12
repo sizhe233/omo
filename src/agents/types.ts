@@ -66,13 +66,13 @@ export function isGptModel(model: string): boolean {
   // Extract model name after provider prefix (e.g., "sub2api-oai/gpt-5.2" -> "gpt-5.2")
   const modelName = model.includes("/") ? model.split("/").pop()! : model
 
-  // GPT models (gpt-4, gpt-5, gpt-5.2, etc.)
-  if (/^gpt-\d/.test(modelName)) {
+  // GPT models (gpt-4, gpt-5, gpt-4o, gpt-4-turbo, etc.)
+  if (modelName.startsWith("gpt-")) {
     return true
   }
 
-  // OpenAI reasoning models (o1, o3, o1-pro, o3-mini, etc.)
-  if (/^o[13](-|$)/.test(modelName)) {
+  // OpenAI reasoning models (o1, o3, o4, o1-pro, o3-mini, etc.)
+  if (/^o\d/.test(modelName)) {
     return true
   }
 
