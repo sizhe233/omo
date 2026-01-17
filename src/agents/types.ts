@@ -53,7 +53,7 @@ export interface AgentPromptMetadata {
 }
 
 export function isGptModel(model: string): boolean {
-  return model.startsWith("openai/") || model.startsWith("github-copilot/gpt-")
+  return model.toLowerCase().includes("gpt")
 }
 
 export type BuiltinAgentName =
