@@ -4,6 +4,15 @@ import { tool, type PluginInput, type ToolDefinition } from "@opencode-ai/plugin
 import { LOOK_AT_DESCRIPTION, MULTIMODAL_LOOKER_AGENT } from "./constants"
 import type { LookAtArgs } from "./types"
 import { log } from "../../shared/logger"
+import type { AgentOverrides } from "../../config/schema"
+
+function parseModelString(model: string): { providerID: string; modelID: string } | undefined {
+  const parts = model.split("/")
+  if (parts.length >= 2) {
+    return { providerID: parts[0], modelID: parts.slice(1).join("/") }
+  }
+  return undefined
+}
 
 interface LookAtArgsWithAlias extends LookAtArgs {
   path?: string
@@ -64,7 +73,13 @@ function inferMimeType(filePath: string): string {
   return mimeTypes[ext] || "application/octet-stream"
 }
 
-export function createLookAt(ctx: PluginInput): ToolDefinition {
+export interface LookAtOptions {
+  ctx: PluginInput
+  userAgents?: AgentOverrides
+}
+
+export function createLookAt(options: LookAtOptions): ToolDefinition {
+  const { ctx, userAgents } = options
   return tool({
     description: LOOK_AT_DESCRIPTION,
     args: {
@@ -117,6 +132,10 @@ If the requested information is not found, clearly state what is missing.`
       log(`[look_at] Created session: ${sessionID}`)
 
       log(`[look_at] Sending prompt with file passthrough to session ${sessionID}`)
+      
+      const agentOverride = userAgents?.["multimodal-looker"]
+      const agentModel = agentOverride?.model ? parseModelString(agentOverride.model) : undefined
+
       await ctx.client.session.prompt({
         path: { id: sessionID },
         body: {
@@ -131,6 +150,7 @@ If the requested information is not found, clearly state what is missing.`
             { type: "text", text: prompt },
             { type: "file", mime: mimeType, url: pathToFileURL(args.file_path).href, filename },
           ],
+          ...(agentModel ? { model: agentModel } : {}),
         },
       })
 

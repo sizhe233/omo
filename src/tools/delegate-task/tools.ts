@@ -3,7 +3,7 @@ import { existsSync, readdirSync } from "node:fs"
 import { join } from "node:path"
 import type { BackgroundManager } from "../../features/background-agent"
 import type { DelegateTaskArgs } from "./types"
-import type { CategoryConfig, CategoriesConfig, GitMasterConfig } from "../../config/schema"
+import type { CategoryConfig, CategoriesConfig, GitMasterConfig, AgentOverrides } from "../../config/schema"
 import { DELEGATE_TASK_DESCRIPTION, DEFAULT_CATEGORIES, CATEGORY_PROMPT_APPENDS } from "./constants"
 import { findNearestMessageWithFields, findFirstMessageWithAgent, MESSAGE_STORAGE } from "../../features/hook-message-injector"
 import { resolveMultipleSkillsAsync } from "../../features/opencode-skill-loader/skill-content"
@@ -147,6 +147,7 @@ export interface DelegateTaskToolOptions {
   client: OpencodeClient
   directory: string
   userCategories?: CategoriesConfig
+  userAgents?: AgentOverrides
   gitMasterConfig?: GitMasterConfig
 }
 
@@ -170,7 +171,7 @@ export function buildSystemContent(input: BuildSystemContentInput): string | und
 }
 
 export function createDelegateTask(options: DelegateTaskToolOptions): ToolDefinition {
-  const { manager, client, directory, userCategories, gitMasterConfig } = options
+  const { manager, client, directory, userCategories, userAgents, gitMasterConfig } = options
 
   return tool({
     description: DELEGATE_TASK_DESCRIPTION,
@@ -479,6 +480,16 @@ ${textContent || "(No text output)"}`
         }
         const agentName = args.subagent_type.trim()
         agentToUse = agentName
+
+        // Get agent's configured model from userAgents
+        const agentOverride = userAgents?.[agentName as keyof typeof userAgents]
+        if (agentOverride?.model) {
+          const parsedAgentModel = parseModelString(agentOverride.model)
+          if (parsedAgentModel) {
+            categoryModel = parsedAgentModel
+            modelInfo = { model: agentOverride.model, type: "user-defined" }
+          }
+        }
 
         // Validate agent exists and is callable (not a primary agent)
         try {

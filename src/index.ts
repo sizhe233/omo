@@ -228,13 +228,21 @@ const OhMyOpenCodePlugin: Plugin = async (ctx) => {
     : null;
   const backgroundTools = createBackgroundTools(backgroundManager, ctx.client);
 
-  const callOmoAgent = createCallOmoAgent(ctx, backgroundManager);
-  const lookAt = createLookAt(ctx);
-  const delegateTask = createDelegateTask({
+  const callOmoAgent = createCallOmoAgent({
+    ctx,
+    backgroundManager,
+    userAgents: pluginConfig.agents,
+  });
+  const lookAt = createLookAt({
+    ctx,
+    userAgents: pluginConfig.agents,
+  });
+const delegateTask = createDelegateTask({
     manager: backgroundManager,
     client: ctx.client,
     directory: ctx.directory,
     userCategories: pluginConfig.categories,
+    userAgents: pluginConfig.agents,
     gitMasterConfig: pluginConfig.git_master,
   });
   const disabledSkills = new Set(pluginConfig.disabled_skills ?? []);

@@ -8,6 +8,15 @@ import { log, getAgentToolRestrictions } from "../../shared"
 import { consumeNewMessages } from "../../shared/session-cursor"
 import { findFirstMessageWithAgent, findNearestMessageWithFields, MESSAGE_STORAGE } from "../../features/hook-message-injector"
 import { getSessionAgent } from "../../features/claude-code-session-state"
+import type { AgentOverrides } from "../../config/schema"
+
+function parseModelString(model: string): { providerID: string; modelID: string } | undefined {
+  const parts = model.split("/")
+  if (parts.length >= 2) {
+    return { providerID: parts[0], modelID: parts.slice(1).join("/") }
+  }
+  return undefined
+}
 
 function getMessageDir(sessionID: string): string | null {
   if (!existsSync(MESSAGE_STORAGE)) return null
@@ -31,10 +40,16 @@ type ToolContextWithMetadata = {
   metadata?: (input: { title?: string; metadata?: Record<string, unknown> }) => void
 }
 
-export function createCallOmoAgent(
-  ctx: PluginInput,
+export interface CallOmoAgentOptions {
+  ctx: PluginInput
   backgroundManager: BackgroundManager
+  userAgents?: AgentOverrides
+}
+
+export function createCallOmoAgent(
+  options: CallOmoAgentOptions
 ): ToolDefinition {
+  const { ctx, backgroundManager, userAgents } = options
   const agentDescriptions = ALLOWED_AGENTS.map(
     (name) => `- ${name}: Specialized agent for ${name} tasks`
   ).join("\n")
@@ -65,10 +80,10 @@ export function createCallOmoAgent(
         if (args.session_id) {
           return `Error: session_id is not supported in background mode. Use run_in_background=false to continue an existing session.`
         }
-        return await executeBackground(args, toolCtx, backgroundManager)
+        return await executeBackground(args, toolCtx, backgroundManager, userAgents)
       }
 
-      return await executeSync(args, toolCtx, ctx)
+      return await executeSync(args, toolCtx, ctx, userAgents)
     },
   })
 }
@@ -76,7 +91,8 @@ export function createCallOmoAgent(
 async function executeBackground(
   args: CallOmoAgentArgs,
   toolContext: ToolContextWithMetadata,
-  manager: BackgroundManager
+  manager: BackgroundManager,
+  userAgents?: AgentOverrides
 ): Promise<string> {
   try {
     const messageDir = getMessageDir(toolContext.sessionID)
@@ -95,6 +111,9 @@ async function executeBackground(
       resolvedParentAgent: parentAgent,
     })
 
+    const agentOverride = userAgents?.[args.subagent_type as keyof typeof userAgents]
+    const agentModel = agentOverride?.model ? parseModelString(agentOverride.model) : undefined
+
     const task = await manager.launch({
       description: args.description,
       prompt: args.prompt,
@@ -102,6 +121,7 @@ async function executeBackground(
       parentSessionID: toolContext.sessionID,
       parentMessageID: toolContext.messageID,
       parentAgent,
+      model: agentModel,
     })
 
     toolContext.metadata?.({
@@ -130,7 +150,8 @@ Use \`background_output\` tool with task_id="${task.id}" to check progress:
 async function executeSync(
   args: CallOmoAgentArgs,
   toolContext: ToolContextWithMetadata,
-  ctx: PluginInput
+  ctx: PluginInput,
+  userAgents?: AgentOverrides
 ): Promise<string> {
   let sessionID: string
 
@@ -183,6 +204,9 @@ async function executeSync(
   log(`[call_omo_agent] Prompt text:`, args.prompt.substring(0, 100))
 
   try {
+    const agentOverride = userAgents?.[args.subagent_type as keyof typeof userAgents]
+    const agentModel = agentOverride?.model ? parseModelString(agentOverride.model) : undefined
+
     await ctx.client.session.prompt({
       path: { id: sessionID },
       body: {
@@ -193,6 +217,7 @@ async function executeSync(
           delegate_task: false,
         },
         parts: [{ type: "text", text: args.prompt }],
+        ...(agentModel ? { model: agentModel } : {}),
       },
     })
   } catch (error) {
