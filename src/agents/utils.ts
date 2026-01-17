@@ -16,7 +16,7 @@ import { createCodeReviewerAgent, CODE_REVIEWER_PROMPT_METADATA } from "./code-r
 import { createRequirementAnalystAgent, REQUIREMENT_ANALYST_PROMPT_METADATA } from "./requirement-analyst"
 import type { AvailableAgent } from "./sisyphus-prompt-builder"
 import { deepMerge } from "../shared"
-import { DEFAULT_CATEGORIES } from "../tools/sisyphus-task/constants"
+import { DEFAULT_CATEGORIES } from "../tools/delegate-task/constants"
 import { resolveMultipleSkills } from "../features/opencode-skill-loader/skill-content"
 
 type AgentSource = AgentFactory | AgentConfig

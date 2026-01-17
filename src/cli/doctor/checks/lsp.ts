@@ -1,5 +1,6 @@
 import type { CheckResult, CheckDefinition, LspServerInfo } from "../types"
 import { CHECK_IDS, CHECK_NAMES } from "../constants"
+import { isServerInstalled } from "../../../tools/lsp/config"
 
 const DEFAULT_LSP_SERVERS: Array<{
   id: string
@@ -12,24 +13,11 @@ const DEFAULT_LSP_SERVERS: Array<{
   { id: "gopls", binary: "gopls", extensions: [".go"] },
 ]
 
-async function checkBinaryExists(binary: string): Promise<boolean> {
-  try {
-    // Use 'where' on Windows, 'which' on Unix
-    const isWindows = process.platform === "win32"
-    const cmd = isWindows ? "where" : "which"
-    const proc = Bun.spawn([cmd, binary], { stdout: "pipe", stderr: "pipe" })
-    await proc.exited
-    return proc.exitCode === 0
-  } catch {
-    return false
-  }
-}
-
 export async function getLspServersInfo(): Promise<LspServerInfo[]> {
   const servers: LspServerInfo[] = []
 
   for (const server of DEFAULT_LSP_SERVERS) {
-    const installed = await checkBinaryExists(server.binary)
+    const installed = isServerInstalled([server.binary])
     servers.push({
       id: server.id,
       installed,

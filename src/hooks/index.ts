@@ -21,7 +21,7 @@ export { createAgentUsageReminderHook } from "./agent-usage-reminder";
 export { createKeywordDetectorHook } from "./keyword-detector";
 export { createNonInteractiveEnvHook } from "./non-interactive-env";
 export { createInteractiveBashSessionHook } from "./interactive-bash-session";
-export { createEmptyMessageSanitizerHook } from "./empty-message-sanitizer";
+
 export { createThinkingBlockValidatorHook } from "./thinking-block-validator";
 export { createRalphLoopHook, type RalphLoopHook } from "./ralph-loop";
 export { createAutoSlashCommandHook } from "./auto-slash-command";
@@ -30,4 +30,4 @@ export { createPrometheusMdOnlyHook } from "./prometheus-md-only";
 export { createTaskResumeInfoHook } from "./task-resume-info";
 export { createStartWorkHook } from "./start-work";
 export { createSisyphusOrchestratorHook } from "./sisyphus-orchestrator";
-export { createSisyphusTaskRetryHook } from "./sisyphus-task-retry";
+export { createDelegateTaskRetryHook } from "./delegate-task-retry";

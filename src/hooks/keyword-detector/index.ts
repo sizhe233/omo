@@ -2,7 +2,7 @@ import type { PluginInput } from "@opencode-ai/plugin"
 import { detectKeywordsWithType, extractPromptText, removeCodeBlocks } from "./detector"
 import { log } from "../../shared"
 import { isSystemDirective } from "../../shared/system-directive"
-import { getMainSessionID } from "../../features/claude-code-session-state"
+import { getMainSessionID, getSessionAgent, subagentSessions } from "../../features/claude-code-session-state"
 import type { ContextCollector } from "../../features/context-injector"
 
 export * from "./detector"
@@ -30,9 +30,17 @@ export function createKeywordDetectorHook(ctx: PluginInput, collector?: ContextC
         return
       }
 
-      let detectedKeywords = detectKeywordsWithType(removeCodeBlocks(promptText), input.agent)
+      const currentAgent = getSessionAgent(input.sessionID) ?? input.agent
+      let detectedKeywords = detectKeywordsWithType(removeCodeBlocks(promptText), currentAgent)
 
       if (detectedKeywords.length === 0) {
+        return
+      }
+
+      // Skip keyword detection for background task sessions to prevent mode injection
+      // (e.g., [analyze-mode]) which incorrectly triggers Prometheus restrictions
+      const isBackgroundTaskSession = subagentSessions.has(input.sessionID)
+      if (isBackgroundTaskSession) {
         return
       }
 

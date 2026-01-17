@@ -583,7 +583,7 @@ Hand your best tools to your best colleagues. Now they can properly refactor, na
 - **ast_grep_search**: AST-aware code pattern search (25 languages)
 - **ast_grep_replace**: AST-aware code replacement
 - **call_omo_agent**: Spawn specialized explore/librarian agents. Supports `run_in_background` parameter for async execution.
-- **sisyphus_task**: Category-based task delegation with specialized agents. Supports pre-configured categories (visual, business-logic) or direct agent targeting. Use `background_output` to retrieve results and `background_cancel` to cancel tasks. See [Categories](#categories).
+- **delegate_task**: Category-based task delegation with specialized agents. Supports pre-configured categories (visual, business-logic) or direct agent targeting. Use `background_output` to retrieve results and `background_cancel` to cancel tasks. See [Categories](#categories).
 
 #### Session Management
 
@@ -922,7 +922,7 @@ Available agents: `oracle`, `librarian`, `explore`, `frontend-ui-ux-engineer`, `
 Oh My OpenCode includes built-in skills that provide additional capabilities:
 
 - **playwright**: Browser automation with Playwright MCP. Use for web scraping, testing, screenshots, and browser interactions.
-- **git-master**: Git expert for atomic commits, rebase/squash, and history search (blame, bisect, log -S). STRONGLY RECOMMENDED: Use with `sisyphus_task(category='quick', skills=['git-master'], ...)` to save context.
+- **git-master**: Git expert for atomic commits, rebase/squash, and history search (blame, bisect, log -S). STRONGLY RECOMMENDED: Use with `delegate_task(category='quick', skills=['git-master'], ...)` to save context.
 
 Disable built-in skills via `disabled_skills` in `~/.config/opencode/oh-my-opencode.json` or `.opencode/oh-my-opencode.json`:
 
@@ -1061,7 +1061,7 @@ Configure concurrency limits for background agent tasks. This controls how many 
 
 ### Categories
 
-Categories enable domain-specific task delegation via the `sisyphus_task` tool. Each category applies runtime presets (model, temperature, prompt additions) when calling the `Sisyphus-Junior` agent.
+Categories enable domain-specific task delegation via the `delegate_task` tool. Each category applies runtime presets (model, temperature, prompt additions) when calling the `Sisyphus-Junior` agent.
 
 **Default Categories:**
 
@@ -1073,12 +1073,12 @@ Categories enable domain-specific task delegation via the `sisyphus_task` tool. 
 **Usage:**
 
 ```
-// Via sisyphus_task tool
-sisyphus_task(category="visual", prompt="Create a responsive dashboard component")
-sisyphus_task(category="business-logic", prompt="Design the payment processing flow")
+// Via delegate_task tool
+delegate_task(category="visual", prompt="Create a responsive dashboard component")
+delegate_task(category="business-logic", prompt="Design the payment processing flow")
 
 // Or target a specific agent directly
-sisyphus_task(agent="oracle", prompt="Review this architecture")
+delegate_task(agent="oracle", prompt="Review this architecture")
 ```
 
 **Custom Categories:**
@@ -1113,7 +1113,7 @@ Disable specific built-in hooks via `disabled_hooks` in `~/.config/opencode/oh-m
 }
 ```
 
-Available hooks: `todo-continuation-enforcer`, `context-window-monitor`, `session-recovery`, `session-notification`, `comment-checker`, `grep-output-truncator`, `tool-output-truncator`, `directory-agents-injector`, `directory-readme-injector`, `empty-task-response-detector`, `think-mode`, `anthropic-context-window-limit-recovery`, `rules-injector`, `background-notification`, `auto-update-checker`, `startup-toast`, `keyword-detector`, `agent-usage-reminder`, `non-interactive-env`, `interactive-bash-session`, `empty-message-sanitizer`, `compaction-context-injector`, `thinking-block-validator`, `claude-code-hooks`, `ralph-loop`, `preemptive-compaction`
+Available hooks: `todo-continuation-enforcer`, `context-window-monitor`, `session-recovery`, `session-notification`, `comment-checker`, `grep-output-truncator`, `tool-output-truncator`, `directory-agents-injector`, `directory-readme-injector`, `empty-task-response-detector`, `think-mode`, `anthropic-context-window-limit-recovery`, `rules-injector`, `background-notification`, `auto-update-checker`, `startup-toast`, `keyword-detector`, `agent-usage-reminder`, `non-interactive-env`, `interactive-bash-session`, `compaction-context-injector`, `thinking-block-validator`, `claude-code-hooks`, `ralph-loop`, `preemptive-compaction`
 
 **Note on `auto-update-checker` and `startup-toast`**: The `startup-toast` hook is a sub-feature of `auto-update-checker`. To disable only the startup toast notification while keeping update checking enabled, add `"startup-toast"` to `disabled_hooks`. To disable all update checking features (including the toast), add `"auto-update-checker"` to `disabled_hooks`.
 

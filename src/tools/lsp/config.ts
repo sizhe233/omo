@@ -170,69 +170,32 @@ export function isServerInstalled(command: string[]): boolean {
   }
 
   const isWindows = process.platform === "win32"
-  // Windows npm packages can be .exe, .cmd, or .bat
-  const windowsExts = [".exe", ".cmd", ".bat"]
+  
+  let exts = [""]
+  if (isWindows) {
+    const pathExt = process.env.PATHEXT || ""
+    if (pathExt) {
+       const systemExts = pathExt.split(";").filter(Boolean)
+       exts = [...new Set([...exts, ...systemExts, ".exe", ".cmd", ".bat", ".ps1"])]
+    } else {
+       exts = ["", ".exe", ".cmd", ".bat", ".ps1"]
+    }
+  }
 
-  const pathEnv = process.env.PATH || ""
+  let pathEnv = process.env.PATH || ""
+  if (isWindows && !pathEnv) {
+    pathEnv = process.env.Path || ""
+  }
+  
   const pathSeparator = isWindows ? ";" : ":"
   const paths = pathEnv.split(pathSeparator)
 
   for (const p of paths) {
-    if (existsSync(join(p, cmd))) return true
-    if (isWindows) {
-      for (const ext of windowsExts) {
-        if (existsSync(join(p, cmd + ext))) return true
+    for (const suffix of exts) {
+      if (existsSync(join(p, cmd + suffix))) {
+        return true
       }
     }
-  }
-
-  const cwd = process.cwd()
-  const home = homedir()
-  const additionalBasePaths = [
-    join(cwd, "node_modules", ".bin"),
-    join(home, ".config", "opencode", "bin"),
-    join(home, ".config", "opencode", "node_modules", ".bin"),
-    // npm global paths (Windows: %APPDATA%\npm, Unix: /usr/local/bin or ~/.npm-global/bin)
-    ...(isWindows
-      ? [
-          join(process.env.APPDATA || join(home, "AppData", "Roaming"), "npm"),
-          join(process.env.LOCALAPPDATA || join(home, "AppData", "Local"), "npm"),
-        ]
-      : [
-          "/usr/local/bin",
-          join(home, ".npm-global", "bin"),
-          join(home, ".local", "bin"),
-        ]),
-    // bun global path
-    join(home, ".bun", "bin"),
-    // pnpm global path
-    ...(isWindows
-      ? [join(process.env.LOCALAPPDATA || join(home, "AppData", "Local"), "pnpm")]
-      : [join(home, ".local", "share", "pnpm")]),
-    // yarn global path
-    ...(isWindows
-      ? [join(process.env.LOCALAPPDATA || join(home, "AppData", "Local"), "Yarn", "bin")]
-      : [join(home, ".yarn", "bin")]),
-    // volta paths
-    join(home, ".volta", "bin"),
-    // nvm paths (Windows)
-    ...(isWindows
-      ? [join(process.env.NVM_SYMLINK || join(home, "AppData", "Roaming", "nvm", "current"))]
-      : []),
-  ]
-
-  for (const basePath of additionalBasePaths) {
-    if (existsSync(join(basePath, cmd))) return true
-    if (isWindows) {
-      for (const ext of windowsExts) {
-        if (existsSync(join(basePath, cmd + ext))) return true
-      }
-    }
-  }
-
-  // Runtime wrappers (bun/node) are always available in oh-my-opencode context
-  if (cmd === "bun" || cmd === "node") {
-    return true
   }
 
   return false

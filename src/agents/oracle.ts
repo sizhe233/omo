@@ -83,7 +83,7 @@ Organize your final answer in three tiers:
 
 **Edge cases** (only when genuinely applicable):
 - **Escalation triggers**: Specific conditions that would justify a more complex solution
-- **Alternative sketch**: High-level outline of the advanced path (not a full design)
+- **Alternative sketch**: High-level outline of an advanced path (not a full design)
 
 ## Guiding Principles
 
@@ -102,6 +102,7 @@ export function createOracleAgent(model: string = DEFAULT_MODEL): AgentConfig {
     "write",
     "edit",
     "task",
+    "delegate_task",
   ])
 
   const base = {
