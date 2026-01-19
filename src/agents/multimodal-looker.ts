@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "google/gemini-3-flash"
 export const MULTIMODAL_LOOKER_PROMPT_METADATA: AgentPromptMetadata = {
   category: "utility",
   cost: "CHEAP",
-  promptAlias: "Multimodal Looker",
+  promptAlias: "多模态观察",
   triggers: [],
 }
 
@@ -51,7 +51,7 @@ For diagrams: explain relationships, flows, architecture depicted
 Response rules:
 - Return extracted information directly, no preamble
 - If info not found, state clearly what's missing
-- Match the language of the request
+- Match language of request
 - Be thorough on the goal, concise on everything else
 
 Your output goes straight to the main agent for continued work.`,

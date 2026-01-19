@@ -11,6 +11,9 @@ import { createMultimodalLookerAgent, MULTIMODAL_LOOKER_PROMPT_METADATA } from "
 import { createMetisAgent } from "./metis"
 import { createOrchestratorSisyphusAgent, orchestratorSisyphusAgent } from "./orchestrator-sisyphus"
 import { createMomusAgent } from "./momus"
+import { createGitMasterAgent, GIT_MASTER_PROMPT_METADATA } from "./git-master"
+import { createCodeReviewerAgent, CODE_REVIEWER_PROMPT_METADATA } from "./code-reviewer"
+import { createRequirementAnalystAgent, REQUIREMENT_ANALYST_PROMPT_METADATA } from "./requirement-analyst"
 import type { AvailableAgent } from "./sisyphus-prompt-builder"
 import { deepMerge } from "../shared"
 import { DEFAULT_CATEGORIES } from "../tools/delegate-task/constants"
@@ -29,6 +32,9 @@ const agentSources: Record<BuiltinAgentName, AgentSource> = {
   "Metis (Plan Consultant)": createMetisAgent,
   "Momus (Plan Reviewer)": createMomusAgent,
   "orchestrator-sisyphus": orchestratorSisyphusAgent,
+  "git-master": createGitMasterAgent,
+  "code-reviewer": createCodeReviewerAgent,
+  "requirement-analyst": createRequirementAnalystAgent,
 }
 
 /**
@@ -42,6 +48,9 @@ const agentMetadata: Partial<Record<BuiltinAgentName, AgentPromptMetadata>> = {
   "frontend-ui-ux-engineer": FRONTEND_PROMPT_METADATA,
   "document-writer": DOCUMENT_WRITER_PROMPT_METADATA,
   "multimodal-looker": MULTIMODAL_LOOKER_PROMPT_METADATA,
+  "git-master": GIT_MASTER_PROMPT_METADATA,
+  "code-reviewer": CODE_REVIEWER_PROMPT_METADATA,
+  "requirement-analyst": REQUIREMENT_ANALYST_PROMPT_METADATA,
 }
 
 function isFactory(source: AgentSource): source is AgentFactory {

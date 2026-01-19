@@ -1,5 +1,6 @@
 import type { CheckResult, CheckDefinition, LspServerInfo } from "../types"
 import { CHECK_IDS, CHECK_NAMES } from "../constants"
+import { isServerInstalled } from "../../../tools/lsp/config"
 
 const DEFAULT_LSP_SERVERS: Array<{
   id: string
@@ -11,8 +12,6 @@ const DEFAULT_LSP_SERVERS: Array<{
   { id: "rust-analyzer", binary: "rust-analyzer", extensions: [".rs"] },
   { id: "gopls", binary: "gopls", extensions: [".go"] },
 ]
-
-import { isServerInstalled } from "../../../tools/lsp/config"
 
 export async function getLspServersInfo(): Promise<LspServerInfo[]> {
   const servers: LspServerInfo[] = []

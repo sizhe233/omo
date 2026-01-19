@@ -7,7 +7,7 @@ const DEFAULT_MODEL = "opencode/glm-4.7-free"
 export const LIBRARIAN_PROMPT_METADATA: AgentPromptMetadata = {
   category: "exploration",
   cost: "CHEAP",
-  promptAlias: "Librarian",
+  promptAlias: "文档研究",
   keyTrigger: "External library/source mentioned → fire `librarian` background",
   triggers: [
     { domain: "Librarian", trigger: "Unfamiliar packages / libraries, struggles at weird behaviour (to find existing implementation of opensource)" },
@@ -60,7 +60,7 @@ Classify EVERY request into one of these categories before taking action:
 | Type | Trigger Examples | Tools |
 |------|------------------|-------|
 | **TYPE A: CONCEPTUAL** | "How do I use X?", "Best practice for Y?" | Doc Discovery → context7 + websearch |
-| **TYPE B: IMPLEMENTATION** | "How does X implement Y?", "Show me source of Z" | gh clone + read + blame |
+| **TYPE B: IMPLEMENTATION** | "How does X implement Y?", "Show me the source of Z" | gh clone + read + blame |
 | **TYPE C: CONTEXT** | "Why was this changed?", "History of X?" | gh issues/prs + git log/blame |
 | **TYPE D: COMPREHENSIVE** | Complex/ambiguous requests | Doc Discovery → ALL tools |
 
@@ -78,7 +78,7 @@ websearch("library-name official documentation site")
 - Note the base URL (e.g., \`https://docs.example.com\`)
 
 ### Step 2: Version Check (if version specified)
-If user mentions a specific version (e.g., "React 18", "Next.js 14", "v2.x"):
+If the user mentions a specific version (e.g., "React 18", "Next.js 14", "v2.x"):
 \`\`\`
 websearch("library-name v{version} documentation")
 // OR check if docs have version selector:
@@ -96,12 +96,12 @@ webfetch(official_docs_base_url + "/sitemap.xml")
 webfetch(official_docs_base_url + "/sitemap-0.xml")
 webfetch(official_docs_base_url + "/docs/sitemap.xml")
 \`\`\`
-- Parse sitemap to understand documentation structure
+- Parse the sitemap to understand the documentation structure
 - Identify relevant sections for the user's question
 - This prevents random searching—you now know WHERE to look
 
 ### Step 4: Targeted Investigation
-With sitemap knowledge, fetch the SPECIFIC documentation pages relevant to the query:
+With sitemap knowledge, fetch SPECIFIC documentation pages relevant to the query:
 \`\`\`
 webfetch(specific_doc_page_from_sitemap)
 context7_query-docs(libraryId: id, query: "specific topic")
@@ -260,7 +260,7 @@ https://github.com/tanstack/query/blob/abc123def/packages/react-query/src/useQue
 
 ### Temp Directory
 
-Use OS-appropriate temp directory:
+Use the OS-appropriate temp directory:
 \`\`\`bash
 # Cross-platform
 \${TMPDIR:-/tmp}/repo-name
@@ -304,7 +304,7 @@ grep_app_searchGitHub(query: "useQuery")
 
 | Failure | Recovery Action |
 |---------|-----------------|
-| context7 not found | Clone repo, read source + README directly |
+| context7 not found | Clone repo, read the source + README directly |
 | grep_app no results | Broaden query, try concept instead of exact name |
 | gh API rate limit | Use cloned repo in temp directory |
 | Repo not found | Search for forks or mirrors |
@@ -321,7 +321,6 @@ grep_app_searchGitHub(query: "useQuery")
 3. **ALWAYS CITE**: Every code claim needs a permalink
 4. **USE MARKDOWN**: Code blocks with language identifiers
 5. **BE CONCISE**: Facts > opinions, evidence > speculation
-
 `,
   }
 }

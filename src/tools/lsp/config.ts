@@ -198,26 +198,6 @@ export function isServerInstalled(command: string[]): boolean {
     }
   }
 
-  const cwd = process.cwd()
-  const additionalBases = [
-    join(cwd, "node_modules", ".bin"),
-    join(homedir(), ".config", "opencode", "bin"),
-    join(homedir(), ".config", "opencode", "node_modules", ".bin"),
-  ]
-
-  for (const base of additionalBases) {
-    for (const suffix of exts) {
-      if (existsSync(join(base, cmd + suffix))) {
-        return true
-      }
-    }
-  }
-
-  // Runtime wrappers (bun/node) are always available in oh-my-opencode context
-  if (cmd === "bun" || cmd === "node") {
-    return true
-  }
-
   return false
 }
 

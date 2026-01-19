@@ -52,8 +52,31 @@ export interface AgentPromptMetadata {
   keyTrigger?: string
 }
 
+/**
+ * Checks if a model is a GPT/OpenAI reasoning model.
+ * Supports custom providers (e.g., "sub2api-oai/gpt-5.2", "codex/o3-pro")
+ * by checking the model name portion, not just the provider prefix.
+ */
 export function isGptModel(model: string): boolean {
-  return model.toLowerCase().includes("gpt")
+  // Direct OpenAI provider
+  if (model.startsWith("openai/") || model.startsWith("github-copilot/gpt-")) {
+    return true
+  }
+
+  // Extract model name after provider prefix (e.g., "sub2api-oai/gpt-5.2" -> "gpt-5.2")
+  const modelName = model.includes("/") ? model.split("/").pop()! : model
+
+  // GPT models (gpt-4, gpt-5, gpt-4o, gpt-4-turbo, etc.)
+  if (modelName.startsWith("gpt-")) {
+    return true
+  }
+
+  // OpenAI reasoning models (o1, o3, o4, o1-pro, o3-mini, etc.)
+  if (/^o\d/.test(modelName)) {
+    return true
+  }
+
+  return false
 }
 
 export type BuiltinAgentName =
@@ -67,6 +90,9 @@ export type BuiltinAgentName =
   | "Metis (Plan Consultant)"
   | "Momus (Plan Reviewer)"
   | "orchestrator-sisyphus"
+  | "git-master"
+  | "code-reviewer"
+  | "requirement-analyst"
 
 export type OverridableAgentName =
   | "build"
