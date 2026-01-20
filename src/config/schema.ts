@@ -21,12 +21,10 @@ export const BuiltinAgentNameSchema = z.enum([
   "oracle",
   "librarian",
   "explore",
-  "frontend-ui-ux-engineer",
-  "document-writer",
   "multimodal-looker",
   "Metis (Plan Consultant)",
   "Momus (Plan Reviewer)",
-  "orchestrator-sisyphus",
+  "atlas",
 ])
 
 export const BuiltinSkillNameSchema = z.enum([
@@ -47,10 +45,8 @@ export const OverridableAgentNameSchema = z.enum([
   "oracle",
   "librarian",
   "explore",
-  "frontend-ui-ux-engineer",
-  "document-writer",
   "multimodal-looker",
-  "orchestrator-sisyphus",
+  "atlas",
 ])
 
 export const AgentNameSchema = BuiltinAgentNameSchema
@@ -87,7 +83,7 @@ export const HookNameSchema = z.enum([
   "delegate-task-retry",
   "prometheus-md-only",
   "start-work",
-  "sisyphus-orchestrator",
+  "atlas",
 ])
 
 export const BuiltinCommandNameSchema = z.enum([
@@ -130,10 +126,8 @@ export const AgentOverridesSchema = z.object({
   oracle: AgentOverrideConfigSchema.optional(),
   librarian: AgentOverrideConfigSchema.optional(),
   explore: AgentOverrideConfigSchema.optional(),
-  "frontend-ui-ux-engineer": AgentOverrideConfigSchema.optional(),
-  "document-writer": AgentOverrideConfigSchema.optional(),
   "multimodal-looker": AgentOverrideConfigSchema.optional(),
-  "orchestrator-sisyphus": AgentOverrideConfigSchema.optional(),
+  atlas: AgentOverrideConfigSchema.optional(),
 })
 
 export const ClaudeCodeConfigSchema = z.object({
@@ -154,7 +148,7 @@ export const SisyphusAgentConfigSchema = z.object({
 })
 
 export const CategoryConfigSchema = z.object({
-  model: z.string(),
+  model: z.string().optional(),
   variant: z.string().optional(),
   temperature: z.number().min(0).max(2).optional(),
   top_p: z.number().min(0).max(1).optional(),
@@ -167,6 +161,8 @@ export const CategoryConfigSchema = z.object({
   textVerbosity: z.enum(["low", "medium", "high"]).optional(),
   tools: z.record(z.string(), z.boolean()).optional(),
   prompt_append: z.string().optional(),
+  /** Mark agent as unstable - forces background mode for monitoring. Auto-enabled for gemini models. */
+  is_unstable_agent: z.boolean().optional(),
 })
 
 export const BuiltinCategoryNameSchema = z.enum([
@@ -174,9 +170,9 @@ export const BuiltinCategoryNameSchema = z.enum([
   "ultrabrain",
   "artistry",
   "quick",
-  "most-capable",
+  "unspecified-low",
+  "unspecified-high",
   "writing",
-  "general",
 ])
 
 export const CategoriesConfigSchema = z.record(z.string(), CategoryConfigSchema)

@@ -1,3 +1,14 @@
+> [!WARNING]
+> **安全警告：冒充网站**
+>
+> **ohmyopencode.com 与本项目无关。** 我们不运营或认可该网站。
+>
+> OhMyOpenCode 是**免费且开源的**。请**勿**在声称"官方"的第三方网站下载安装程序或输入付款信息。
+>
+> 由于该冒充网站设有付费墙，我们**无法验证其分发的内容**。请将来自该网站的任何下载视为**潜在不安全**。
+>
+> ✅ 官方下载地址：https://github.com/code-yeongyu/oh-my-opencode/releases
+
 > [!NOTE]
 >
 > [![Sisyphus Labs — Sisyphus 是像你的团队一样编码的智能体。](./.github/assets/sisyphuslabs.png?v=2)](https://sisyphuslabs.ai)
@@ -5,7 +16,7 @@
 
 > [!TIP]
 >
-> [![Orchestrator 现已进入测试阶段。](./.github/assets/orchestrator-sisyphus.png?v=3)](https://github.com/code-yeongyu/oh-my-opencode/releases/tag/v3.0.0-beta.10)
+> [![Orchestrator 现已进入测试阶段。](./.github/assets/orchestrator-atlas.png?v=3)](https://github.com/code-yeongyu/oh-my-opencode/releases/tag/v3.0.0-beta.10)
 > > **Orchestrator 现已进入测试阶段。使用 `oh-my-opencode@3.0.0-beta.10` 安装。**
 >
 > 加入我们！
@@ -195,7 +206,7 @@
 
 #### 直接安装就行。
 
-你可以从 [overview page](./guide/overview.md) 学到很多，但以下是示例工作流程。
+你可以从 [overview page](docs/guide/overview.md) 学到很多，但以下是示例工作流程。
 
 只需安装这个，你的智能体就会这样工作：
 
@@ -278,7 +289,7 @@ curl -s https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads
 详细信息请参阅 [Features Documentation](docs/features.md)。
 
 **概览：**
-- **智能体**：Sisyphus（主智能体）、Prometheus（规划器）、Oracle（架构/调试）、Librarian（文档/代码搜索）、Explore（快速代码库 grep）、Frontend Engineer（UI/UX）、Document Writer、Multimodal Looker
+- **智能体**：Sisyphus（主智能体）、Prometheus（规划器）、Oracle（架构/调试）、Librarian（文档/代码搜索）、Explore（快速代码库 grep）、Multimodal Looker
 - **后台智能体**：像真正的开发团队一样并行运行多个智能体
 - **LSP & AST 工具**：重构、重命名、诊断、AST 感知代码搜索
 - **上下文注入**：自动注入 AGENTS.md、README.md、条件规则

@@ -1,3 +1,14 @@
+> [!WARNING]
+> **Security warning: impersonation site**
+>
+> **ohmyopencode.com is NOT affiliated with this project.** We do not operate or endorse that site.
+>
+> OhMyOpenCode is **free and open-source**. Do **not** download installers or enter payment details on third-party sites that claim to be "official."
+>
+> Because the impersonation site is behind a paywall, we **cannot verify what it distributes**. Treat any downloads from it as **potentially unsafe**.
+>
+> ✅ Official downloads: https://github.com/code-yeongyu/oh-my-opencode/releases
+
 > [!NOTE]
 >
 > [![Sisyphus Labs — Sisyphus is the agent that codes like your team.](./.github/assets/sisyphuslabs.png?v=2)](https://sisyphuslabs.ai)
@@ -5,7 +16,7 @@
 
 > [!TIP]
 >
-> [![The Orchestrator is now available in beta.](./.github/assets/orchestrator-sisyphus.png?v=3)](https://github.com/code-yeongyu/oh-my-opencode/releases/tag/v3.0.0-beta.10)
+> [![The Orchestrator is now available in beta.](./.github/assets/orchestrator-atlas.png?v=3)](https://github.com/code-yeongyu/oh-my-opencode/releases/tag/v3.0.0-beta.10)
 > > **The Orchestrator is now available in beta. Use `oh-my-opencode@3.0.0-beta.10` to install it.**
 >
 > Be with us!
@@ -200,7 +211,7 @@ Meet our main agent: Sisyphus (Opus 4.5 High). Below are the tools Sisyphus uses
 
 #### Just Install This
 
-You can learn a lot from [overview page](./guide/overview.md), but following is like the example workflow.
+You can learn a lot from [overview page](docs/guide/overview.md), but following is like the example workflow.
 
 Just by installing this, you make your agents to work like:
 
@@ -282,7 +293,7 @@ We have lots of features that you'll think should obviously exist, and once you 
 See the full [Features Documentation](docs/features.md) for detailed information.
 
 **Quick Overview:**
-- **Agents**: Sisyphus (the main agent), Prometheus (planner), Oracle (architecture/debugging), Librarian (docs/code search), Explore (fast codebase grep), Frontend Engineer (UI/UX), Document Writer, Multimodal Looker
+- **Agents**: Sisyphus (the main agent), Prometheus (planner), Oracle (architecture/debugging), Librarian (docs/code search), Explore (fast codebase grep), Multimodal Looker
 - **Background Agents**: Run multiple agents in parallel like a real dev team
 - **LSP & AST Tools**: Refactoring, rename, diagnostics, AST-aware code search
 - **Context Injection**: Auto-inject AGENTS.md, README.md, conditional rules

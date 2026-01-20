@@ -29,7 +29,7 @@ import {
   createDelegateTaskRetryHook,
   createTaskResumeInfoHook,
   createStartWorkHook,
-  createSisyphusOrchestratorHook,
+  createAtlasHook,
   createPrometheusMdOnlyHook,
 } from "./hooks";
 import {
@@ -198,8 +198,8 @@ const OhMyOpenCodePlugin: Plugin = async (ctx) => {
     ? createStartWorkHook(ctx)
     : null;
 
-  const sisyphusOrchestrator = isHookEnabled("sisyphus-orchestrator")
-    ? createSisyphusOrchestratorHook(ctx)
+  const atlasHook = isHookEnabled("atlas")
+    ? createAtlasHook(ctx)
     : null;
 
   const prometheusMdOnly = isHookEnabled("prometheus-md-only")
@@ -419,7 +419,7 @@ const delegateTask = createDelegateTask({
       await agentUsageReminder?.event(input);
       await interactiveBashSession?.event(input);
       await ralphLoop?.event(input);
-      await sisyphusOrchestrator?.handler(input);
+      await atlasHook?.handler(input);
 
       const { event } = input;
       const props = event.properties as Record<string, unknown> | undefined;
@@ -573,7 +573,7 @@ const delegateTask = createDelegateTask({
       await interactiveBashSession?.["tool.execute.after"](input, output);
 await editErrorRecovery?.["tool.execute.after"](input, output);
         await delegateTaskRetry?.["tool.execute.after"](input, output);
-        await sisyphusOrchestrator?.["tool.execute.after"]?.(input, output);
+        await atlasHook?.["tool.execute.after"]?.(input, output);
       await taskResumeInfo["tool.execute.after"](input, output);
     },
   };

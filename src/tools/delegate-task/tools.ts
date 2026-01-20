@@ -11,7 +11,7 @@ import { discoverSkills } from "../../features/opencode-skill-loader"
 import { getTaskToastManager } from "../../features/task-toast-manager"
 import type { ModelFallbackInfo } from "../../features/task-toast-manager/types"
 import { subagentSessions, getSessionAgent } from "../../features/claude-code-session-state"
-import { log, getAgentToolRestrictions } from "../../shared"
+import { log, getAgentToolRestrictions, resolveModel, getOpenCodeConfigPaths } from "../../shared"
 
 type OpencodeClient = PluginInput["client"]
 
@@ -107,15 +107,15 @@ type ToolContextWithMetadata = {
   metadata?: (input: { title?: string; metadata?: Record<string, unknown> }) => void
 }
 
-function resolveCategoryConfig(
+export function resolveCategoryConfig(
   categoryName: string,
   options: {
     userCategories?: CategoriesConfig
-    parentModelString?: string
-    systemDefaultModel?: string
+    inheritedModel?: string
+    systemDefaultModel: string
   }
-): { config: CategoryConfig; promptAppend: string; model: string | undefined } | null {
-  const { userCategories, parentModelString, systemDefaultModel } = options
+): { config: CategoryConfig; promptAppend: string; model: string } | null {
+  const { userCategories, inheritedModel, systemDefaultModel } = options
   const defaultConfig = DEFAULT_CATEGORIES[categoryName]
   const userConfig = userCategories?.[categoryName]
   const defaultPromptAppend = CATEGORY_PROMPT_APPENDS[categoryName] ?? ""
@@ -124,12 +124,18 @@ function resolveCategoryConfig(
     return null
   }
 
-  // Model priority: user override > category default > parent model (fallback) > system default
-  const model = userConfig?.model ?? defaultConfig?.model ?? parentModelString ?? systemDefaultModel
+  // Model priority for categories: user override > category default > system default
+  // Categories have explicit models - no inheritance from parent session
+  const model = resolveModel({
+    userModel: userConfig?.model,
+    inheritedModel: defaultConfig?.model, // Category's built-in model takes precedence over system default
+    systemDefault: systemDefaultModel,
+  })
   const config: CategoryConfig = {
     ...defaultConfig,
     ...userConfig,
     model,
+    variant: userConfig?.variant ?? defaultConfig?.variant,
   }
 
   let promptAppend = defaultPromptAppend
@@ -412,7 +418,7 @@ ${textContent || "(No text output)"}`
       let systemDefaultModel: string | undefined
       try {
         const openCodeConfig = await client.config.get()
-        systemDefaultModel = (openCodeConfig as { model?: string })?.model
+        systemDefaultModel = (openCodeConfig as { data?: { model?: string } })?.data?.model
       } catch {
         // Config fetch failed, proceed without system default
         systemDefaultModel = undefined
@@ -422,16 +428,27 @@ ${textContent || "(No text output)"}`
       let categoryModel: { providerID: string; modelID: string; variant?: string } | undefined
       let categoryPromptAppend: string | undefined
 
-      const parentModelString = parentModel
+      const inheritedModel = parentModel
         ? `${parentModel.providerID}/${parentModel.modelID}`
         : undefined
 
       let modelInfo: ModelFallbackInfo | undefined
 
       if (args.category) {
+        // Guard: require system default model for category delegation
+        if (!systemDefaultModel) {
+          const paths = getOpenCodeConfigPaths({ binary: "opencode", version: null })
+          return (
+            'oh-my-opencode requires a default model.\n\n' +
+            `Add this to ${paths.configJsonc}:\n\n` +
+            '  "model": "anthropic/claude-sonnet-4-5"\n\n' +
+            '(Replace with your preferred provider/model)'
+          )
+        }
+
         const resolved = resolveCategoryConfig(args.category, {
           userCategories,
-          parentModelString,
+          inheritedModel,
           systemDefaultModel,
         })
         if (!resolved) {
@@ -441,11 +458,6 @@ ${textContent || "(No text output)"}`
         // Determine model source by comparing against the actual resolved model
         const actualModel = resolved.model
         const userDefinedModel = userCategories?.[args.category]?.model
-        const categoryDefaultModel = DEFAULT_CATEGORIES[args.category]?.model
-
-        if (!actualModel) {
-          return `No model configured. Set a model in your OpenCode config, plugin config, or use a category with a default model.`
-        }
 
         if (!parseModelString(actualModel)) {
           return `Invalid model format "${actualModel}". Expected "provider/model" format (e.g., "anthropic/claude-sonnet-4-5").`
@@ -455,11 +467,8 @@ ${textContent || "(No text output)"}`
           case userDefinedModel:
             modelInfo = { model: actualModel, type: "user-defined" }
             break
-          case parentModelString:
+          case inheritedModel:
             modelInfo = { model: actualModel, type: "inherited" }
-            break
-          case categoryDefaultModel:
-            modelInfo = { model: actualModel, type: "category-default" }
             break
           case systemDefaultModel:
             modelInfo = { model: actualModel, type: "system-default" }
@@ -474,6 +483,51 @@ ${textContent || "(No text output)"}`
             : parsedModel)
           : undefined
         categoryPromptAppend = resolved.promptAppend || undefined
+
+        // Unstable agent detection - force background mode for monitoring
+        const isUnstableAgent = resolved.config.is_unstable_agent === true || actualModel.toLowerCase().includes("gemini")
+        if (isUnstableAgent && args.run_in_background === false) {
+          // Force background mode for unstable agents
+          const systemContent = buildSystemContent({ skillContent, categoryPromptAppend })
+
+          try {
+            const task = await manager.launch({
+              description: args.description,
+              prompt: args.prompt,
+              agent: agentToUse,
+              parentSessionID: ctx.sessionID,
+              parentMessageID: ctx.messageID,
+              parentModel,
+              parentAgent,
+              model: categoryModel,
+              skills: args.skills.length > 0 ? args.skills : undefined,
+              skillContent: systemContent,
+            })
+
+            ctx.metadata?.({
+              title: args.description,
+              metadata: { sessionId: task.sessionID, category: args.category },
+            })
+
+            return `[UNSTABLE AGENT MODE]
+
+This category uses an unstable/experimental model (${actualModel}).
+Forced to background mode for monitoring stability.
+
+Task ID: ${task.id}
+Session ID: ${task.sessionID}
+
+Monitor progress: Use \`background_output\` with task_id="${task.id}"
+Or watch the session directly for real-time updates.`
+          } catch (error) {
+            return formatDetailedError(error, {
+              operation: "Launch background task (unstable agent)",
+              args,
+              agent: agentToUse,
+              category: args.category,
+            })
+          }
+        }
       } else {
         if (!args.subagent_type?.trim()) {
           return `Agent name cannot be empty.`

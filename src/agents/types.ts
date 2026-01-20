@@ -1,6 +1,6 @@
 import type { AgentConfig } from "@opencode-ai/sdk"
 
-export type AgentFactory = (model?: string) => AgentConfig
+export type AgentFactory = (model: string) => AgentConfig
 
 /**
  * Agent category for grouping in Sisyphus prompt sections
@@ -84,12 +84,11 @@ export type BuiltinAgentName =
   | "oracle"
   | "librarian"
   | "explore"
-  | "frontend-ui-ux-engineer"
-  | "document-writer"
   | "multimodal-looker"
   | "Metis (Plan Consultant)"
   | "Momus (Plan Reviewer)"
-  | "orchestrator-sisyphus"
+  | "atlas"
+  // Fork additions
   | "git-master"
   | "code-reviewer"
   | "requirement-analyst"
