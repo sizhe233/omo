@@ -4,7 +4,40 @@
 
 **Fork 分支**: `my-customizations`  
 **上游分支**: `code-yeongyu/oh-my-opencode:dev`  
-**最后同步**: 2026-01-18
+**最后同步**: 2026-01-21
+
+---
+
+## 合并历史
+
+### 2026-01-21 合并上游 dev 分支
+
+**合并提交**: `8875773`
+
+**上游主要变更**:
+- `orchestrator-sisyphus` → `atlas` 重命名（Agent 和 Hook）
+- 删除 `document-writer` 和 `frontend-ui-ux-engineer` Agent（改用 Category）
+- Category model catalog 和 `is_unstable_agent` 选项
+- 不稳定 Agent 强制后台模式
+- Session 创建重试机制
+- 各种 bug 修复和文档更新
+
+**解决的冲突**:
+- `src/agents/index.ts` - 合并导出，保留 3 个新 Agent
+- `src/agents/types.ts` - 合并类型定义，保留 GPT 模型检测增强
+- `src/agents/utils.ts` - 合并 Agent 注册，添加新 Agent
+
+**接受的上游删除**:
+- `src/agents/document-writer.ts` ❌ 已删除
+- `src/agents/frontend-ui-ux-engineer.ts` ❌ 已删除
+
+**保留的 Fork 特色**:
+- ✅ 3 个新 Agent (git-master, code-reviewer, requirement-analyst)
+- ✅ 中文 promptAlias
+- ✅ GPT 模型检测增强
+- ✅ thinking-block-validator 修复
+- ✅ Windows 兼容性修复
+- ✅ Agent 架构文档
 
 ---
 
@@ -34,9 +67,9 @@
 | oracle | oracle | 架构顾问 |
 | librarian | librarian | 文档研究 |
 | explore | explore | 探索者 |
-| frontend-ui-ux-engineer | Frontend Engineer | 前端工程师 |
-| document-writer | Document Writer | 文档撰写 |
 | multimodal-looker | Multimodal Looker | 多模态观察 |
+
+> **注意**: `frontend-ui-ux-engineer` 和 `document-writer` 已在 2026-01-21 合并中随上游删除，改用 Category 系统。
 
 ### 3. 用户自定义模型覆盖
 
