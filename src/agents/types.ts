@@ -87,7 +87,7 @@ export type BuiltinAgentName =
   | "multimodal-looker"
   | "Metis (Plan Consultant)"
   | "Momus (Plan Reviewer)"
-  | "atlas"
+  | "Atlas"
   // Fork additions
   | "git-master"
   | "code-reviewer"
