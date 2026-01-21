@@ -2,15 +2,53 @@
 
 > 本文档记录 [sizhe233/omo](https://github.com/sizhe233/omo) 相对于上游 [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) 的特色功能和修复。
 
-**Fork 分支**: `my-customizations`  
-**上游分支**: `code-yeongyu/oh-my-opencode:dev`  
-**最后同步**: 2026-01-21
+**Fork 分支**: `my-customizations`
+**上游分支**: `code-yeongyu/oh-my-opencode:dev`
+**最后同步**: 2026-01-21 (第二次合并)
 
 ---
 
 ## 合并历史
 
-### 2026-01-21 合并上游 dev 分支
+### 2026-01-21 合并上游 dev 分支 (第二次)
+
+**合并提交**: `dde88e4`
+
+**上游主要变更** (10 个新 commits):
+- Model Fallback System - 自动模型降级,支持跨提供商回退
+- Atlas agent 重命名 (`orchestrator-sisyphus` → `Atlas`)
+- Thinking Block Validator 重构为主动验证策略
+- Session Recovery 错误检测顺序优化
+- 不稳定 Agent 强制后台模式并等待结果
+- 恢复并行后台 explore/librarian 提示
+- Model Selection System 文档
+- CLA 签署记录更新
+
+**解决的冲突**:
+- `src/agents/types.ts` - 保留 GPT 模型检测增强,合并 `Atlas` 重命名
+- `src/agents/utils.ts` - 合并 `Atlas` 重命名,保留 3 个自定义 Agent
+
+**保留的 Fork 特色**:
+- ✅ Enhanced `isGptModel()` - 支持自定义 API 提供商 (如 `sub2api-oai/gpt-5.2`)
+- ✅ 3 个自定义 Agent (git-master, code-reviewer, requirement-analyst)
+- ✅ 中文 promptAlias
+- ✅ Agent 架构文档 (docs/agent-architecture.md)
+- ✅ Fork 文档 (docs/FORK.md)
+
+**接受的上游变更**:
+- ✅ Model Fallback System (新增 `src/cli/model-fallback.ts`)
+- ✅ Thinking Block Validator 主动验证策略
+- ✅ Atlas 重命名 (`atlas` → `Atlas`)
+- ✅ Session Recovery 改进
+
+**冲突解决策略**:
+- GPT 模型检测: 保留 Fork 的自定义提供商支持逻辑
+- Agent 注册: 合并上游 Atlas 重命名 + 保留 3 个自定义 Agent
+- 文档: 自动保留 (上游未修改这些文件)
+
+---
+
+### 2026-01-21 合并上游 dev 分支 (第一次)
 
 **合并提交**: `8875773`
 
