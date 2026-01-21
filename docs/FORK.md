@@ -4,11 +4,39 @@
 
 **Fork 分支**: `my-customizations`
 **上游分支**: `code-yeongyu/oh-my-opencode:dev`
-**最后同步**: 2026-01-21 (第二次合并)
+**最后同步**: 2026-01-21 (第三次合并,增量更新)
 
 ---
 
 ## 合并历史
+
+### 2026-01-21 合并上游 dev 分支 (第三次,增量更新)
+
+**合并提交**: `c87fdfc`
+**合并分支**: `merge-upstream-2026-01-21-v2`
+
+**上游增量变更** (6 个新 commits,基于第二次合并):
+- Skills 目录路径修复 (`skill/` → `skills/`) - 修复 #810
+- Skills 路径尊重 `OPENCODE_CONFIG_DIR` 环境变量
+- Skill MCP 支持对象类型参数
+- Skill MCP 修复 Zod v4 兼容性 (record schema 需要 keyType)
+- CLA 签署记录更新
+
+**解决的冲突**:
+- 无冲突 - 所有变更与 Fork 自定义文件无重叠
+
+**影响的文件**:
+- `src/features/opencode-skill-loader/loader.ts` - Skills 路径修复
+- `src/tools/skill-mcp/tools.ts` - MCP 参数支持改进
+- `docs/features.md`, `src/features/AGENTS.md` - 文档更新
+- `signatures/cla.json` - CLA 签名
+
+**Fork 特色保持**:
+- ✅ 所有自定义 Agent 完整保留
+- ✅ 所有 Fork 文档完整保留
+- ✅ GPT 模型检测增强完整保留
+
+---
 
 ### 2026-01-21 合并上游 dev 分支 (第二次)
 
